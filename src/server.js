@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'https://aftermovie.cluster-ig3.igpolytech.fr',
+    origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -24,7 +24,7 @@ const io = socketIo(server, {
 
 // Configuration CORS pour Express
 app.use(cors({
-  origin: 'https://aftermovie.cluster-ig3.igpolytech.fr',
+  origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
