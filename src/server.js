@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
-const socketIo = require('socket.io');
+const { Server } = require('socket.io');
 
 const userRoutes = require('./routes/userRoutes');
 const movieRoutes = require('./routes/movieRoutes');
@@ -14,7 +14,7 @@ const likeRoutes = require('./routes/likeRoutes');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
+const io = new Server(server, {
   cors: {
     origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
     methods: ['GET', 'POST'],
@@ -22,7 +22,7 @@ const io = socketIo(server, {
   }
 });
 
-// Configuration CORS pour Express
+// Configuration CORS for Express
 app.use(cors({
   origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
