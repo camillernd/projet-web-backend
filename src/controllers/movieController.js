@@ -42,29 +42,28 @@ exports.updateMovie = async (req, res) => {
     }
     res.status(200).json(movie);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status (500).json({ error: error.message });
   }
 };
 
 // Mettre à jour uniquement l'URL d'un film
 exports.updateMovieURL = async (req, res) => {
-    try {
-      const updatedMovie = await Movie.findByIdAndUpdate(
-        req.params.id, // ID du film à mettre à jour
-        { posterURL: req.body.posterURL }, // Nouvel URL du poster
-        { new: true } // Option pour renvoyer le document mis à jour
-      );
-  
-      if (!updatedMovie) {
-        return res.status(404).json({ message: 'Film not found' });
-      }
-  
-      res.status(200).json(updatedMovie);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  try {
+    const updatedMovie = await Movie.findByIdAndUpdate(
+      req.params.id, // ID du film à mettre à jour
+      { posterURL: req.body.posterURL }, // Nouvel URL du poster
+      { new: true } // Option pour renvoyer le document mis à jour
+    );
+
+    if (!updatedMovie) {
+      return res.status(404).json({ message: 'Film not found' });
     }
-  };
-  
+
+    res.status(200).json(updatedMovie);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Supprimer un film
 exports.deleteMovie = async (req, res) => {
@@ -78,3 +77,18 @@ exports.deleteMovie = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Rechercher des films par titre
+exports.searchMoviesByTitle = async (req, res) => {
+  try {
+    const title = req.query.title;
+    const movies = await Movie.find({ title: { $regex: title, $options: 'i' } });
+    if (movies.length === 0) {
+      return res.status(404).json({ message: 'No movies found with the given title' });
+    }
+    res.status(200).json(movies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+

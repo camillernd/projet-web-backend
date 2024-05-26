@@ -1,7 +1,11 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Discussion = require('../models/discussionModel');
+const Message = require('../models/messageModel');
+const Like = require('../models/likeModel');
 
+// Créer un nouvel utilisateur
 exports.createUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -68,18 +72,31 @@ exports.updateUser = async (req, res) => {
 // Méthode pour supprimer un utilisateur
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const userId = req.params.id;
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
-    res.status(200).json({ success: true, data: {} });
+
+    // Supprimer les likes de l'utilisateur
+    await Like.deleteMany({ userId });
+
+    // Supprimer les messages de l'utilisateur
+    await Message.deleteMany({ userId });
+
+    // Supprimer les discussions de l'utilisateur
+    await Discussion.deleteMany({ userId });
+
+    // Supprimer l'utilisateur
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({ success: true, message: 'Utilisateur et ses données associées supprimés avec succès.' });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
-
-
+// Login utilisateur
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -98,7 +115,11 @@ exports.loginUser = async (req, res) => {
     }
 
     // Génération du token JWT avec les informations utilisateur
-    const token = jwt.sign({ userId: user._id, firstName: user.firstName, role: user.role }, 'secret_key', { expiresIn: '1h' });
+    const token = jwt.sign(
+      { userId: user._id, firstName: user.firstName, lastName: user.lastName, role: user.role },
+      'secret_key',
+      { expiresIn: '1h' }
+    );
 
     // Création d'un cookie HTTPOnly pour stocker l'email
     res.cookie('email', email, { httpOnly: true });
@@ -110,6 +131,3 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
-

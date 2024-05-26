@@ -17,16 +17,14 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
-    methods: ['GET', 'POST'],
-    credentials: true
+    methods: ['GET', 'POST']
   }
 });
 
 // Configuration CORS for Express
 app.use(cors({
   origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
 app.use(express.json());
@@ -37,6 +35,12 @@ app.use('/api/celeb', celebRoutes);
 app.use('/api/discussion', discussionRoutes);
 app.use('/api/message', messageRoutes);
 app.use('/api/like', likeRoutes);
+
+// Middleware de journalisation
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 io.on('connection', (socket) => {
   console.log('New client connected');
