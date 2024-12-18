@@ -16,14 +16,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
+    origin: process.env.FRONT_URL,
     methods: ['GET', 'POST']
   }
 });
 
 // Configuration CORS for Express
 app.use(cors({
-  origin: 'http://aftermovie.cluster-ig3.igpolytech.fr',
+  origin: process.env.FRONT_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
